@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from uuid import uuid4
-from . import User, Message, Analytic, Conversation
+from . import User, Message, Conversation
 from sqlalchemy import String, DateTime, func, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship

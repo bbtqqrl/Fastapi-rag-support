@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from uuid import uuid4
-from . import User, Message, Analytic, Conversation
+from . import Message, Analytic, Conversation
 
 from sqlalchemy import String, DateTime, func
 from sqlalchemy.dialects.postgresql import UUID
