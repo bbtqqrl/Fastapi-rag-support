@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.models.base import Base
 
 class User(Base):
-
     external_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     conversations = relationship("Conversation", back_populates="user")
