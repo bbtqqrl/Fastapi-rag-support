@@ -1,9 +1,13 @@
 from datetime import datetime
-from . import User, Analytic, Conversation
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .users import User
+    from .conversations import Conversation
+    
+from core.models.base import Base
 from sqlalchemy import String, DateTime, func, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from core.models.base import Base
 
 class Message(Base):
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
@@ -14,6 +18,6 @@ class Message(Base):
     
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    conversation: Mapped[Conversation] = relationship("Conversation", back_populates="message")
-    user: Mapped[User] = relationship("User", back_populates="message")
+    conversation: Mapped["Conversation"] = relationship("Conversation", back_populates="message")
+    user: Mapped["User"] = relationship("User", back_populates="message")
 
