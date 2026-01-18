@@ -1,25 +1,41 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from uuid import uuid4
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from .users import User
-    from .messages import Message
-    from .conversations import Conversation
-
-from core.models.base import Base
-from sqlalchemy import String, DateTime, func, ForeignKey
+from sqlalchemy import Integer, Boolean, Float, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 
-class Analytic(Base):
-    user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    conversation_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("conversations.id", ondelete="CASCADE"), nullable=False)
+from core.models.base import Base
 
-    question: Mapped[str] = mapped_column(nullable=False)
-    answer: Mapped[str] = mapped_column(nullable=False)
-    confidence: Mapped[float] = mapped_column(nullable=True)
+class ConversationAnalytic(Base):
+    __tablename__ = "conversation_analytics"
+
+    id: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+    )
+
+    conversation_id: Mapped[UUID] = mapped_column(
+        ForeignKey("conversations.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+
+    total_messages: Mapped[int] = mapped_column(default=0)
+    user_messages: Mapped[int] = mapped_column(default=0)
+    assistant_messages: Mapped[int] = mapped_column(default=0)
+
+    avg_confidence: Mapped[float | None] = mapped_column(nullable=True)
+    avg_latency_ms: Mapped[int | None] = mapped_column(nullable=True)
+    total_tokens: Mapped[int | None] = mapped_column(nullable=True)
+
+    resolved: Mapped[bool] = mapped_column(default=False)
+
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    conversation: Mapped["Conversation"] = relationship("Conversation", back_populates="analytic")
-    message: Mapped["Message"] = relationship("Message", back_populates="analytic")
-    user: Mapped["User"] = relationship("User", back_populates="analytic")
+    conversation = relationship(
+        "Conversation",
+        back_populates="analytic",
+        uselist=False,
+    )

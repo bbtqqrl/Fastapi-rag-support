@@ -21,5 +21,3 @@ app = FastAPI(lifespan=lifespan)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", reload=True)
-products = [{'name': 'Laptop', 'price': 1000}, {'name': 'Mouse', 'price': 50}, {'name': 'Keyboard', 'price': 120}]
-product = products.sort()
