@@ -7,8 +7,8 @@ from sqlalchemy.sql import func
 
 from core.models.base import Base
 
-class ConversationAnalytic(Base):
-    __tablename__ = "conversation_analytics"
+class Analytic(Base):
+    __tablename__ = "analytics"
 
     id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
