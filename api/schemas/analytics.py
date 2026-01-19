@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class AnalyticCreate(BaseModel):
-    converstion_id: int
+    conversation_id: int
 
 class AnalyticResponse(BaseModel):
     id: int
