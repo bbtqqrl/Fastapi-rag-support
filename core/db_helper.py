@@ -18,12 +18,11 @@ class DatabaseHelper:
         )
     
     def get_scoped_session(self):
-        sesion = async_scoped_session(
+        session = async_scoped_session(
             self.session_factory,
             scopefunc=current_task,
         )
-        return sesion   
-
+        return session   
     async def session_dependency(self) -> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
             yield session
