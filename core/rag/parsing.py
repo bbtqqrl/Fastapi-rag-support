@@ -1,9 +1,11 @@
+from email.mime import text
 from io import BytesIO
 from pypdf import PdfReader
 
 def parse_file(filename: str, file_bytes: bytes) -> str:
     if filename.endswith(".pdf"):
-        return _parse_pdf(file_bytes)
+        text = _parse_pdf(file_bytes)
+        return text
     return _parse_text(file_bytes)
 
 

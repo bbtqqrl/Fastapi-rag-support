@@ -34,3 +34,5 @@ async def search_chunks(db: AsyncSession, query_embedding: list[float],limit: in
     rows = result.scalars().all()
     
     return [row.content for row in rows]
+
+

@@ -24,6 +24,7 @@
 
 import asyncio
 from pathlib import Path
+import time
 from core.db_helper import db_helper
 from core.models.documents import Document
 from core.rag.service import ingest_file
@@ -52,10 +53,12 @@ async def _manual_test():
 
 async def _manual_user_query_test(query: str):
     async with db_helper.session_factory() as db:
-        context_chunks = await retrieve_context(db, query, limit=3)
-        print("Context Chunks:")
-        for i, chunk in enumerate(context_chunks, 1):
-            print(f"{i}. {chunk}\n")
+        context_chunks = await retrieve_context(db, query)
+        print(context_chunks)
 
 if __name__ == "__main__":
-    asyncio.run(_manual_user_query_test('Привіт, а як з вами звязатись?'))
+    time_start = time.time()
+    asyncio.run(_manual_user_query_test('привіт а з якого дерева ви виготовляєте меблі?'))
+    time_end = time.time()
+    print(f"⏱️  Time taken: {time_end - time_start:.2f} seconds")
+    # asyncio.run(_manual_test())
