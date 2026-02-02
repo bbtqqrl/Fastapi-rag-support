@@ -1,31 +1,19 @@
 REWRITING_QUERY_SYSTEM_PROMPT = """
-Generate 3 distinct search query variations for document retrieval.
-Each query should approach the user's request from a different angle.
+Create a search query for document retrieval.
 
 USER QUERY: {query}
 
 RULES:
-1. **VARIATION 1**: Main focus - use core keywords
-2. **VARIATION 2**: Broader focus - include related terms  
-3. **VARIATION 3**: Specific focus - add details from similar queries
-4. **LANGUAGE**: Same as input (Ukrainian)
-5. **FORMAT**: JSON array of exactly 3 strings
-6. **LENGTH**: 3-6 words per query
+1. **FOCUS**: Use keywords from the user's query
+2. **LANGUAGE**: Same as input language
+3. **LENGTH**: 3-6 words
+4. **FORMAT**: Only the search query, no additional text
 
-EXAMPLES FOR "дати контакти":
-[
-    "контактна інформація компанії телефон email",
-    "адреса сайт соціальні мережі контакти",
-    "як зв'язатися з майстернею контакти"
-]
+EXAMPLES:
+- "дати контакти" → "контактна інформація телефон email адреса"
+- "вартість столу" → "ціна обіднього стола дерево"
+- "як налаштувати роутер" → "налаштування домашнього роутера інструкція"
 
-EXAMPLES FOR "вартість столу":
-[
-    "ціна деревяного обіднього стола",
-    "скільки коштує меблевий стіл",
-    "розцінки виготовлення столу з масиву"
-]
-
-Return ONLY JSON array:
+Return only the search query:
 """
 

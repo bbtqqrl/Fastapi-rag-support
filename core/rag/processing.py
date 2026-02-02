@@ -15,79 +15,11 @@ load_dotenv()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def chunk_text(text: str) -> list[str]:
-    chunker = SemanticChunker(
-        embedding_model="minishlab/potion-base-32M",
-        threshold=0.7,
-        chunk_size=2048,
-        skip_window=1  
-    )
-    chunks = [chunk.text for chunk in chunker.chunk(text)]
-    return chunks
-
-
-def chunk_faq(text: str) -> List[str]:
-    section_pattern = re.compile(r"^(\d+)\.\s+(.*)")
-    question_pattern = re.compile(r"^(\d+\.\d+)\.\s+(.*)")
-
-    chunks: List[str] = []
-
-    current_section: str | None = None
-    current_question: str | None = None
-    current_answer_lines: List[str] = []
-
-    lines = [line.strip() for line in text.splitlines() if line.strip()]
-    print(lines)
-
-    for line in lines:
-        # Розділ: "1. Про нас"
-        section_match = section_pattern.match(line)
-        if section_match and not question_pattern.match(line):
-            current_section = section_match.group(2)
-            continue
-
-
-        question_match = question_pattern.match(line)
-        if question_match:
-            if current_question:
-                chunk_parts = []
-                if current_section:
-                    chunk_parts.append(f"{current_section}.")
-                chunk_parts.append(f"{current_question}.")
-                chunk_parts.append(" ".join(current_answer_lines))  
-                chunks.append(" ".join(chunk_parts))
-
-            current_question = question_match.group(2)
-            current_answer_lines = []
-            continue
-
-        # Рядок відповіді
-        current_answer_lines.append(line)
-
-    # Додаємо останній чанк
-    if current_question:
-        chunk_parts = []
-        if current_section:
-            chunk_parts.append(f"{current_section}.")
-        chunk_parts.append(f"{current_question}.")
-        chunk_parts.append(" ".join(current_answer_lines))  
-        chunks.append(" ".join(chunk_parts))
-
-    for chunk in chunks:
-        print("---- CHUNK ----")
-        print(chunk)
-        print("---------------")
-
-    return chunks
-
-
 async def rerank_chunks(chunks, query, limit: int = 3) -> list[str]:
     model = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
     pairs = [(query, chunk) for chunk in chunks]
     scores = model.predict(pairs, show_progress_bar=False)
-
-    print("Reranking scores:", scores)
 
     ranked = [chunks[i] for i in np.argsort(scores)[::-1]]
     return ranked[0:limit]
@@ -127,3 +59,4 @@ async def rewrite_query(query: str, chat_history = None) -> str:
         pass
 
     return response
+

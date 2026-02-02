@@ -58,7 +58,7 @@ async def _manual_user_query_test(query: str):
 
 if __name__ == "__main__":
     time_start = time.time()
-    asyncio.run(_manual_user_query_test('привіт а з якого дерева ви виготовляєте меблі?'))
+    asyncio.run(_manual_user_query_test('як виконується доставка?'))
     time_end = time.time()
     print(f"⏱️  Time taken: {time_end - time_start:.2f} seconds")
     # asyncio.run(_manual_test())

@@ -23,7 +23,7 @@ async def insert_chunks(
     await db.commit()
 
 
-async def search_chunks(db: AsyncSession, query_embedding: list[float],limit: int = 5,) -> list[str]:
+async def search_chunks(db: AsyncSession, query_embedding: list[float],limit: int = 14,) -> list[str]:
     stmt = (
         select(DocumentChunk)
         .order_by(DocumentChunk.embedding.cosine_distance(query_embedding))
