@@ -24,7 +24,8 @@ class SemanticTextChunker(BaseChunker):
         )
     
     def chunk(self, text: str):
-        return [chunk.text for chunk in self.chunker.chunk(text)]
+        chunks = self.chunker.chunk(text)
+        return [chunk.text for chunk in chunks]
 
 
 class FAQChunker(BaseChunker):
@@ -33,6 +34,13 @@ class FAQChunker(BaseChunker):
         self.question_pattern = re.compile(r"^(\d+\.\d+)\.\s+(.*)")
     
     def chunk(self, text: str):
+        """
+        Expects FAQ in format:
+
+        1. Section title
+        1.1. Question?
+        Answer text...
+        """
         chunks = []
         current_section, current_question = None, None
         current_answer = []
@@ -69,15 +77,13 @@ class FAQChunker(BaseChunker):
         return chunks
 
 
-class ChunkerFactory:
-    @staticmethod
-    def create_chunker(chunker_type: str, **kwargs):
-        chunkers = {
-            "semantic": SemanticTextChunker,
-            "faq": FAQChunker,
-        }
+CHUNKERS = {
+    "semantic": SemanticTextChunker,
+    "faq": FAQChunker,
+}
+
+def create_chunker(chunker_type: str, **kwargs) -> BaseChunker:
+    if chunker_type not in CHUNKERS:
+        raise ValueError(f"Unknown chunker type: {chunker_type}. Available: {list(CHUNKERS.keys())}")
+    return CHUNKERS[chunker_type](**kwargs)
         
-        if chunker_type not in chunkers:
-            raise ValueError(f"Unknown chunker type: {chunker_type}. Available: {list(chunkers.keys())}")
-        
-        return chunkers[chunker_type](**kwargs)

@@ -1,18 +1,28 @@
-from email.mime import text
 from io import BytesIO
 from pypdf import PdfReader
+from abc import ABC, abstractmethod
 
-def parse_file(filename: str, file_bytes: bytes) -> str:
-    if filename.endswith(".pdf"):
-        text = _parse_pdf(file_bytes).replace("\n", " ")
-        return text
-    return _parse_text(file_bytes)
+class BaseParser(ABC):
+    @abstractmethod
+    def parse(self, file_bytes: bytes) -> str:
+        pass
 
+class PDFParser(BaseParser):
+    def parse(self, file_bytes: bytes) -> str:
+        reader = PdfReader(BytesIO(file_bytes))
+        return "\n".join(page.extract_text() or "" for page in reader.pages)
+    
+class TextParser(BaseParser):
+    def parse(self, file_bytes: bytes) -> str:
+        return file_bytes.decode("utf-8", errors="ignore")
+    
+PARSERS = {
+    "pdf": PDFParser,
+    "txt": TextParser,
+}
 
-def _parse_text(file_bytes: bytes) -> str:
-    return file_bytes.decode("utf-8", errors="ignore")
-
-
-def _parse_pdf(file_bytes: bytes) -> str:
-    reader = PdfReader(BytesIO(file_bytes))
-    return "\n".join(page.extract_text() or "" for page in reader.pages)
+def create_parser(extension: str) -> BaseParser:
+    extension = extension.lower()
+    if extension not in PARSERS:
+        raise ValueError(f"Unsupported file type: {extension}")
+    return PARSERS[extension]()

@@ -2,12 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from core.models.document_chunk import DocumentChunk
 
-async def insert_chunks(
-    db: AsyncSession,
-    document_id,
-    chunks: list[str],
-    embeddings: list[list[float]],
-) -> None:
+async def insert_chunks(db: AsyncSession, document_id, chunks: list[str], embeddings: list[list[float]],) -> None:
     assert len(chunks) == len(embeddings)
 
     objects = [
