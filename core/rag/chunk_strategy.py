@@ -12,8 +12,8 @@ class SemanticTextChunker(BaseChunker):
     def __init__(
         self,
         embedding_model: str = "minishlab/potion-base-32M",
-        threshold: float = 0.7,
-        chunk_size: int = 2048,
+        threshold: float = 0.6,
+        chunk_size: int = 4000,
         skip_window: int = 1
     ):
         self.chunker = SemanticChunker(

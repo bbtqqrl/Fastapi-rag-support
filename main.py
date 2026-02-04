@@ -27,8 +27,8 @@ from pathlib import Path
 import time
 from core.db_helper import db_helper
 from core.models.documents import Document
-from core.rag.service import ingest_file
-from core.rag.service import retrieve_context
+from core.rag.rag_pipeline import ingest_file
+from core.rag.rag_pipeline import retrieve_context
 
 
 async def _manual_test():
@@ -43,9 +43,11 @@ async def _manual_test():
 
         await ingest_file(
             db=db,
-            filename=file_path.name,
             file_bytes=file_bytes,
             document_id=document.id,
+            parser='pdf',
+            chunk_strategy='faq',
+            embedding_model='text-embedding-3-small'
         )
 
         print("✅ DONE")
@@ -53,7 +55,7 @@ async def _manual_test():
 
 async def _manual_user_query_test(query: str):
     async with db_helper.session_factory() as db:
-        context_chunks = await retrieve_context(db, query)
+        context_chunks = await retrieve_context(db, query, use_rerank=False, use_rewrite=False)
         print(context_chunks)
 
 if __name__ == "__main__":

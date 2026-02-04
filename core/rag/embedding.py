@@ -1,7 +1,7 @@
-from llm_client import llm_client
+from .llm_client import client
 
 async def embed_texts(texts: list[str], model: str) -> list[list[float]]:
-    response = await llm_client.embeddings.create(
+    response = await client.embeddings.create(
         model=model,
         input=texts, 
     )

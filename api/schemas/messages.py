@@ -1,16 +1,17 @@
+from typing import Optional, List
 from pydantic import BaseModel
 
-class MessageCreate(BaseModel):
-    conversation_id: int
-    role: str
-    content: str
 
-class MessageResponse(BaseModel):
-    id: int
-    conversation_id: int
-    role: str
+class RAGMessageRequest(BaseModel):
     content: str
-    created_at: str
+    top_k: int = 5
+    rewrite_query: bool = False
+    rerank: bool = False
+    return_chunks: bool = False
 
-    class Config:
-        from_attributes = True
+
+class RAGMessageResponse(BaseModel):
+    answer: str
+    rewritten_query: Optional[str] = None
+    used_chunks: Optional[List[str]] = None
+    processing_time_ms: float
